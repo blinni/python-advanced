@@ -1,0 +1,46 @@
+import pandas as pd
+from numpy.ma.extras import average
+
+df = pd.read_csv('avgIqperCountry.csv')
+
+print(df.info())
+
+first_rows = df.head()
+print(first_rows)
+
+country_data = df['Country']
+print(country_data)
+
+subset = df[['Country', 'Average IQ']]
+print(subset)
+
+filtered_df = subset[subset['Average IQ'] > 100]
+print(filtered_df)
+
+null_mask = df.isnull()
+
+null_count = null_mask.sum()
+print("n\nCount of null values in each column")
+print(null_count)
+
+df.dropna(inplace=True)
+print("\nDatasetr information after removing null values:")
+print(df.info())
+
+duplicated_count = df.duplicated().sum()
+print("\nCount od duplicates rows:")
+print(duplicated_count)
+
+average_iq_per_continent = df.groupby('Continent')['Average IQ'].mean()
+print(average_iq_per_continent)
+
+df['Population - 2023'] = df['Population - 2023'].apply(lambda x: float(x.replace(',', '')))
+print(df.info())
+
+total_nobel_by_country = df.groupby('Country')['Nobel Prices'].sum()
+sorted_total_nobel_by_country = total_nobel_by_country.sort_values(ascending=False)
+
+print("\nTotal Nobel Prizes by country", sorted_total_nobel_by_country)
+
+sorted_total_nobel_by_nonzero = sorted_total_nobel_by_country[sorted_total_nobel_by_country !=0]
+print("\nTotal Nobel Prizes by country , excluding countries with Zero Nobel Prizes\n", sorted_total_nobel_by_nonzero)
