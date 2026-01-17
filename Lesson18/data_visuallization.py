@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
 import plotly.express as px
-
+from streamlit import title
 
 books_df = pd.read_csv('bestsellers_with_categories_2022_03_27.csv')
 
@@ -35,3 +35,25 @@ with col2:
     top_titles = books_df['Author'].value_counts().head(10)
     st.bar_chart(top_titles)
 
+st.subheader("Genre Distribution")
+fig = px.pie(books_df, names="Genre", title='Most Liked Genre (2009-20027)', color='Genre', color_discrete_sequence= px.colors.sequential.Plasma)
+st.plotly_chart(fig)
+
+st.subheader("Number of Fiction cs Non-fiction Books Over The Years")
+size = books_df.groupby(['Year', 'Genre']).size().reset_index(name='Counts')
+fig = px.bar(size, x = 'Year', y = 'Counts', color='Genre', title='Number of Fiction cs Non-fiction Books from 2009-2022',
+             color_discrete_sequence=px.colors.sequential.Plasma, barmode='group')
+st.plotly_chart(fig)
+
+st.subheader("Top 15 Authors by Counts of the books Published (2009-2022)")
+top_authors = books_df['Author'].value_counts().head(15).reset_index()
+top_authors.columns = ['Author', 'Count']
+fig = px.bar(top_authors, x ='Count', y='Author', orientation='h', title='Top 15 Authors by Counts of the books Published', color='Count',
+             color_continuous_scale=px.colors.sequential.Plasma, barmode='group')
+st.plotly_chart(fig)
+
+
+st.subheader('Filter Date by Genre ')
+genre_filter = st.selectbox('Select Genre', books_df['Genre'].unique())
+filter_df = books_df[books_df['Genre'] == genre_filter]
+st.write(filter_df)
